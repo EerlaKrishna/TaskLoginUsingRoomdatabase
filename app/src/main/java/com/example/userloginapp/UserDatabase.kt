@@ -1,16 +1,17 @@
 package com.example.userloginapp
 
-
-
-import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import android.content.Context
+import com.example.userloginapp.task.TaskDao
+import com.example.userloginapp.task.Task
 
-@Database(entities = [User::class], version = 1, exportSchema = false)
+@Database(entities = [User::class, Task::class], version = 2, exportSchema = false)
 abstract class UserDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
+    abstract fun taskDao(): TaskDao
 
     companion object {
         @Volatile
@@ -22,7 +23,9 @@ abstract class UserDatabase : RoomDatabase() {
                     context.applicationContext,
                     UserDatabase::class.java,
                     "user_database"
-                ).build()
+                )
+                    .addMigrations(MIGRATION_1_2) // Add the migration
+                    .build()
                 INSTANCE = instance
                 instance
             }
